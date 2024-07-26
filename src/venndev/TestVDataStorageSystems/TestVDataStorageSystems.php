@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace venndev\TestVDataStorageSystems;
 
 use Exception;
+use JsonException;
 use Throwable;
 use pocketmine\plugin\PluginBase;
 use venndev\vapmdatabase\database\mysql\MySQL;
@@ -23,6 +24,7 @@ final class TestVDataStorageSystems extends PluginBase
      */
     public function onEnable(): void
     {
+        self::setPeriodTask(10 * 60); // Save all data every 10 minutes
         self::initVDataStorageSystems($this);
 
         // Create a storage with the name "test.yml" and type "YAML"
@@ -36,7 +38,8 @@ final class TestVDataStorageSystems extends PluginBase
         self::createStorage(
             name: "testSQLITE",
             type: TypeDataStorage::TYPE_SQLITE,
-            database: new SQLite($this->getDataFolder() . "test.db")
+            database: new SQLite($this->getDataFolder() . "test.db"),
+            hashData: true
         );
         self::getStorage("testSQLITE")->set("test", ["testAC", "testB"]);
         // This is an example of how to use the Async class to get data from the database
@@ -63,9 +66,12 @@ final class TestVDataStorageSystems extends PluginBase
 //            $data = Async::await(self::getStorage("testMYSQL")->get("test"));
 //            var_dump($data);
 //        });
-        self::setPeriodTask(10 * 60); // Save all data every 10 minutes
     }
 
+    /**
+     * @throws Throwable
+     * @throws JsonException
+     */
     public function onDisable(): void
     {
         self::saveAll();
