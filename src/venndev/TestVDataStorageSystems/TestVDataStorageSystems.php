@@ -63,6 +63,7 @@ final class TestVDataStorageSystems extends PluginBase
 //            $data = Async::await(self::getStorage("testMYSQL")->get("test"));
 //            var_dump($data);
 //        });
+        self::setPeriodTask(10 * 60); // Save all data every 10 minutes
     }
 
     public function onDisable(): void
